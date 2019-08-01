@@ -36,13 +36,22 @@
 //////////////////////////
 
 char auth[] = "rg_Do05VEkRRT5SCAQKvW3v9LM_DgSy3"; // KEY
-char ssid[] = "iPhone"; // sername of wifi
-char pass[] = "redisochka"; // Password
+char ssid[] = "Dacha Hotel"; // sername of wifi
+char pass[] = "28051998"; // Password
 int buttonState1;
+
+
+//////////////////////////
 
 // Setting for CAN
 //////////////////////////
 CAN_device_t CAN_cfg;
+
+int l1; // Lamp group 1
+int l2; // Lamp group 2
+int l3; // Lamp group 3
+int l4; // Lamp group 4
+
 //////////////////////////
 
 
@@ -57,6 +66,27 @@ WidgetLCD lcd1(V5); // V5 is number of virtual pin for Blynk
 // Setting LCD display
 LiquidCrystal_I2C lcd(0x27,16,2); 
 //////////////////////////
+
+// SEND CAN 
+//////////////////////////////////
+void sendcan()
+{
+CAN_frame_t rx_frame;
+rx_frame.FIR.B.FF = CAN_frame_std;
+      rx_frame.MsgID = 1;
+      rx_frame.FIR.B.DLC = 8;
+      rx_frame.data.u8[0] = l1;
+      rx_frame.data.u8[1] = l2;
+      rx_frame.data.u8[2] = l3;
+      rx_frame.data.u8[3] = l4;
+      rx_frame.data.u8[4] = 0;
+      rx_frame.data.u8[5] = 0;
+      rx_frame.data.u8[6] = 0;
+      rx_frame.data.u8[7] = 0;
+      ESP32Can.CANWriteFrame(&rx_frame);
+}
+//////////////////////////////////
+
 
 void setup()
 {
@@ -104,8 +134,6 @@ void setup()
 
 
 
-
-
  
 void loop()
 {
@@ -115,9 +143,11 @@ void loop()
   lcd1.print(0,0,"System is ready");
   Blynk.run(); 
   Blynk.connected();
+  
 
   // Blynk.disconnect();
-}
+} 
+
 
 //////////////////////////////////
 // Sync data from server
@@ -146,6 +176,8 @@ BLYNK_WRITE(V1) {
   delay(3000);
   lcd.clear();
   lcd1.clear();
+  l1=1;
+  sendcan();
   }
   else
   {
@@ -157,6 +189,8 @@ BLYNK_WRITE(V1) {
   delay(3000);
   lcd.clear();
   lcd1.clear();
+  l1=0;
+  sendcan();
   }
   }
 
@@ -175,6 +209,8 @@ BLYNK_WRITE(V1) {
   delay(3000);
   lcd.clear();
   lcd1.clear();
+  l2=1;
+  sendcan();
   }
   else
   {
@@ -186,6 +222,8 @@ BLYNK_WRITE(V1) {
   delay(3000);
   lcd.clear();
   lcd1.clear();
+  l2=0;
+  sendcan();
   }
   }
 
@@ -204,6 +242,8 @@ BLYNK_WRITE(V1) {
   delay(3000);
   lcd.clear();
   lcd1.clear();
+  l3=1;
+  sendcan();
   }
   else
   {
@@ -212,9 +252,13 @@ BLYNK_WRITE(V1) {
   lcd.clear();
   lcd.setCursor(0,0);            
   lcd.print("3rd group OFF"); 
-  delay(3000);
+  delay(3000); 
+  l3=0;
+  
   lcd.clear();
   lcd1.clear();
+  sendcan();
+  
   }
   }
   
@@ -232,8 +276,16 @@ BLYNK_WRITE(V1) {
   lcd.setCursor(0,0);            
   lcd.print("4th group ON"); 
   delay(3000);
+  l4=1;
+  lcd.setCursor(0,1);            
+  lcd.print(l4); 
+     delay(3000);
+    lcd1.clear();
   lcd.clear();
-  lcd1.clear();
+  sendcan();
+ 
+
+  
   }
   else
   {
@@ -245,26 +297,13 @@ BLYNK_WRITE(V1) {
   delay(3000);
   lcd.clear();
   lcd1.clear();
+  l4=0;
+  lcd.setCursor(0,1);            
+  lcd.print(l4);
+  delay(3000);
+    lcd1.clear();
+  lcd.clear(); 
+  sendcan();
+    
   }
   }
-  
-  
-// SEND CAN 
-//////////////////////////////////
-void sendcan()
-{
-CAN_frame_t rx_frame;
-rx_frame.FIR.B.FF = CAN_frame_std;
-      rx_frame.MsgID = 1;
-      rx_frame.FIR.B.DLC = 8;
-      rx_frame.data.u8[0] = 'h';
-      rx_frame.data.u8[1] = 'e';
-      rx_frame.data.u8[2] = 'l';
-      rx_frame.data.u8[3] = 'l';
-      rx_frame.data.u8[4] = 'o';
-      rx_frame.data.u8[5] = 'c';
-      rx_frame.data.u8[6] = 'a';
-      rx_frame.data.u8[7] = 'n';
-}
-//////////////////////////////////
-
