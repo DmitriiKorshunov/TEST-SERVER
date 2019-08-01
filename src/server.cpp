@@ -36,8 +36,8 @@
 //////////////////////////
 
 char auth[] = "rg_Do05VEkRRT5SCAQKvW3v9LM_DgSy3"; // KEY
-char ssid[] = "Dacha Hotel"; // sername of wifi
-char pass[] = "28051998"; // Password
+char ssid[] = "SPEECH_405"; // sername of wifi
+char pass[] = "multimodal"; // Password
 int buttonState1;
 
 
@@ -51,7 +51,10 @@ int l1; // Lamp group 1
 int l2; // Lamp group 2
 int l3; // Lamp group 3
 int l4; // Lamp group 4
-
+int s1; // Lamp group status 1
+int s2; // Lamp group status 2
+int s3; // Lamp group status 3
+int s4; // Lamp group status 4
 //////////////////////////
 
 
@@ -79,10 +82,10 @@ rx_frame.FIR.B.FF = CAN_frame_std;
       rx_frame.data.u8[1] = l2;
       rx_frame.data.u8[2] = l3;
       rx_frame.data.u8[3] = l4;
-      rx_frame.data.u8[4] = 0;
-      rx_frame.data.u8[5] = 0;
-      rx_frame.data.u8[6] = 0;
-      rx_frame.data.u8[7] = 0;
+      rx_frame.data.u8[4] = s1;
+      rx_frame.data.u8[5] = s2;
+      rx_frame.data.u8[6] = s3;
+      rx_frame.data.u8[7] = s4;
       ESP32Can.CANWriteFrame(&rx_frame);
 }
 //////////////////////////////////
@@ -118,6 +121,7 @@ void setup()
   delay(3000);
   lcd1.print(0,0,"System is ready"); // There is text for Blynk
   lcd.clear();
+  
   // Init CAN
   CAN_cfg.speed=CAN_SPEED_1000KBPS;
   CAN_cfg.tx_pin_id = GPIO_NUM_3;
